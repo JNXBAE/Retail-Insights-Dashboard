@@ -3,9 +3,23 @@
 import { Pie, PieChart, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts"
 import { customerSegmentsData, customerData } from "@/lib/data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { ChartTooltipContent } from "../ui/chart"
+import { ChartTooltipContent, ChartContainer, type ChartConfig } from "../ui/chart"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Badge } from "../ui/badge"
+
+const chartConfig = {
+    value: {
+        label: "Customers",
+    },
+    ...customerSegmentsData.reduce((acc, segment) => {
+        acc[segment.name] = {
+            label: segment.name,
+            color: segment.fill,
+        };
+        return acc;
+    }, {} as ChartConfig),
+} satisfies ChartConfig;
+
 
 export function CustomerSegmentationTab() {
   return (
@@ -16,30 +30,30 @@ export function CustomerSegmentationTab() {
                 <CardDescription>Distribution of customers across segments.</CardDescription>
             </CardHeader>
             <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                    <Tooltip
-                        cursor={false}
-                        content={<ChartTooltipContent indicator="dot" hideLabel />}
-                    />
-                    <Pie
-                        data={customerSegmentsData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={100}
-                        innerRadius={60}
-                        paddingAngle={5}
-                        labelLine={false}
-                    >
-                    {customerSegmentsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
-                    ))}
-                    </Pie>
-                    <Legend content={<CustomLegend />} />
-                </PieChart>
-                </ResponsiveContainer>
+                <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[300px]">
+                    <PieChart>
+                        <Tooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="dot" hideLabel />}
+                        />
+                        <Pie
+                            data={customerSegmentsData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={100}
+                            innerRadius={60}
+                            paddingAngle={5}
+                            labelLine={false}
+                        >
+                        {customerSegmentsData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
+                        ))}
+                        </Pie>
+                        <Legend content={<CustomLegend />} />
+                    </PieChart>
+                </ChartContainer>
             </CardContent>
         </Card>
 
